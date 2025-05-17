@@ -39,8 +39,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import br.edu.utfpr.appcontatos.R
 import br.edu.utfpr.appcontatos.data.Contact
+import br.edu.utfpr.appcontatos.data.generateContacts
 import br.edu.utfpr.appcontatos.data.groupByInitial
 import br.edu.utfpr.appcontatos.ui.contact.composables.ContactAvatar
+import br.edu.utfpr.appcontatos.ui.contact.composables.DefaultErrorContent
+import br.edu.utfpr.appcontatos.ui.contact.composables.DefaultLoadingContent
 import br.edu.utfpr.appcontatos.ui.contact.composables.FavoriteIconButton
 import br.edu.utfpr.appcontatos.ui.theme.AppContatosTheme
 
@@ -50,9 +53,11 @@ fun ContactsListScreen(
     viewModel: ContactsListViewModel = viewModel()
 ) {
     if (viewModel.uiState.isLoading) {
-        LoadingContent()
+        DefaultLoadingContent(
+            text = stringResource(R.string.loading_contacts)
+        )
     } else if (viewModel.uiState.hasError) {
-        ErrorContent(
+        DefaultErrorContent (
             onTryAgainPressed = viewModel::loadContacts
         )
     } else {
@@ -127,83 +132,6 @@ fun AppBarPreview() {
         )
     }
 }
-
-@Composable
-fun LoadingContent(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        CircularProgressIndicator(
-            color = MaterialTheme.colorScheme.primary,
-            trackColor = MaterialTheme.colorScheme.surfaceVariant,
-            modifier = Modifier.size(60.dp)
-        )
-        Spacer(Modifier.size(10.dp))
-        Text(
-            text = stringResource(R.string.loading_contacts),
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.primary
-        )
-    }
-}
-
-@Preview(showBackground = true, heightDp = 400)
-@Composable
-fun LoadingContentPreview() {
-    AppContatosTheme {
-        LoadingContent()
-    }
-}
-
-@Composable
-fun ErrorContent(
-    modifier: Modifier = Modifier,
-    onTryAgainPressed: () -> Unit
-) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            imageVector = Icons.Filled.CloudOff,
-            contentDescription = stringResource(R.string.error_loading),
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(80.dp)
-        )
-        Text(
-            text = stringResource(R.string.error_loading),
-            modifier = Modifier.padding(top = 8.dp, start = 8.dp, end = 8.dp),
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Text(
-            text = stringResource(R.string.wait_and_try_again),
-            modifier = Modifier.padding(top = 8.dp, start = 8.dp, end = 8.dp),
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.primary
-        )
-        ElevatedButton(
-            onClick = onTryAgainPressed,
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(stringResource(R.string.try_again))
-        }
-    }
-}
-
-@Preview(showBackground = true, heightDp = 400)
-@Composable
-fun ErrorContentPreview() {
-    AppContatosTheme {
-        ErrorContent(
-            onTryAgainPressed = {}
-        )
-    }
-}
-
 
 @Composable
 fun EmptyList(modifier: Modifier = Modifier) {
